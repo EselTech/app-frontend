@@ -1,84 +1,578 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teste</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>Impostos</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 40px 16px;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 36px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .container h1 {
+            text-align: center;
+            margin-bottom: 24px;
+            font-size: 1.6rem;
+            color: #1a1a2e;
+        }
+
+        /* Abas */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 28px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #888;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: color 0.2s, border-color 0.2s;
+        }
+
+        .tab-btn.active {
+            color: #4a90e2;
+            border-bottom-color: #4a90e2;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        /* Formulário */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.88rem;
+            color: #444;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.15);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary {
+            background-color: #4a90e2;
+            color: #fff;
+            width: 100%;
+            padding: 12px;
+            margin-top: 4px;
+        }
+
+        .btn-primary:hover { background-color: #357abd; }
+        .btn-primary:disabled { background-color: #a0c4f1; cursor: not-allowed; }
+
+        .btn-secondary {
+            background-color: #f0f2f5;
+            color: #1a1a2e;
+            font-size: 0.8rem;
+            padding: 6px 12px;
+        }
+
+        .btn-secondary:hover { background-color: #dde1e7; }
+
+        .btn-warning {
+            background-color: #fff8e1;
+            color: #e65100;
+            font-size: 0.8rem;
+            padding: 6px 12px;
+        }
+
+        .btn-warning:hover { background-color: #ffe082; }
+
+        .btn-danger {
+            background-color: #fdecea;
+            color: #c62828;
+            font-size: 0.8rem;
+            padding: 6px 12px;
+        }
+
+        .btn-danger:hover { background-color: #f5c6c4; }
+
+        .card-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Lista de impostos */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 28px 0 14px;
+        }
+
+        .section-header h2 {
+            font-size: 1rem;
+            color: #1a1a2e;
+        }
+
+        .imposto-card {
+            background-color: #f8f9fb;
+            border: 1px solid #e8eaed;
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .imposto-card .info strong {
+            display: block;
+            font-size: 0.92rem;
+            color: #1a1a2e;
+        }
+
+        .imposto-card .info span {
+            font-size: 0.8rem;
+            color: #777;
+        }
+
+        /* Lista de registros */
+        .registro-item {
+            background-color: #f8f9fb;
+            border: 1px solid #e8eaed;
+            border-radius: 8px;
+            padding: 12px 18px;
+            margin-bottom: 8px;
+            font-size: 0.88rem;
+            color: #444;
+        }
+
+        /* Detalhe de imposto individual */
+        .detalhe-box {
+            background-color: #eef4fc;
+            border: 1px solid #c5d9f5;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-top: 16px;
+            font-size: 0.88rem;
+            color: #1a1a2e;
+            display: none;
+        }
+
+        .detalhe-box.visible { display: block; }
+
+        .detalhe-box h3 {
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            color: #1a1a2e;
+        }
+
+        .detalhe-box p {
+            margin: 4px 0;
+            color: #444;
+        }
+
+        /* Mensagens */
+        .message {
+            margin-top: 14px;
+            text-align: center;
+            font-size: 0.88rem;
+            padding: 8px 12px;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .message.success { background-color: #e6f4ea; color: #2e7d32; display: block; }
+        .message.error   { background-color: #fdecea; color: #c62828; display: block; }
+
+        .empty {
+            text-align: center;
+            color: #aaa;
+            font-size: 0.88rem;
+            padding: 24px 0;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.visible {
+            display: flex;
+        }
+
+        .modal-box {
+            background: #fff;
+            border-radius: 12px;
+            padding: 28px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+        }
+
+        .modal-box h3 {
+            margin-bottom: 20px;
+            font-size: 1rem;
+            color: #1a1a2e;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+    </style>
 </head>
 
 <body>
+    <div class="container">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+            <h1 style="margin-bottom:0;">Painel de Impostos</h1>
+            <a href="login.html" class="btn btn-secondary" style="text-decoration:none;">Sair</a>
+        </div>
 
-    <div id="impostos">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="mudarAba('impostos')">Impostos</button>
+            <button class="tab-btn" onclick="mudarAba('registros')">Registros</button>
+        </div>
 
+        <!-- ABA: IMPOSTOS -->
+        <div id="aba-impostos" class="tab-panel active">
+
+            <form id="formCadastro">
+                <div class="form-group">
+                    <label for="nomeImposto">Nome do Imposto</label>
+                    <input type="text" id="nomeImposto" placeholder="Ex: CDI, Selic, IPCA" required />
+                </div>
+                <div class="form-group">
+                    <label for="codigoSgs">Código SGS</label>
+                    <input type="number" id="codigoSgs" placeholder="Ex: 12" required />
+                </div>
+                <button type="submit" class="btn btn-primary" id="btnCadastrar">Cadastrar Imposto</button>
+            </form>
+            <div class="message" id="msgCadastro"></div>
+
+            <div class="section-header">
+                <h2>Impostos Cadastrados</h2>
+                <button class="btn btn-secondary" onclick="carregarImpostos()">Atualizar</button>
+            </div>
+
+            <div id="listaImpostos">
+                <p class="empty">Clique em "Atualizar" para carregar.</p>
+            </div>
+
+            <div class="detalhe-box" id="detalheImposto">
+                <h3 id="detalheNome"></h3>
+                <p id="detalheCodigo"></p>
+                <p id="detalheValor"></p>
+                <p id="detalheData"></p>
+            </div>
+        </div>
+
+        <!-- ABA: REGISTROS -->
+        <div id="aba-registros" class="tab-panel">
+            <div class="section-header">
+                <h2>Todos os Registros</h2>
+                <button class="btn btn-secondary" onclick="carregarRegistros()">Atualizar</button>
+            </div>
+            <div id="listaRegistros">
+                <p class="empty">Clique em "Atualizar" para carregar.</p>
+            </div>
+        </div>
     </div>
 
-</body>
+    <script>
 
-</html>
-<script>
+        // ── Navegação de abas ──────────────────────────────────────────
+        function mudarAba(aba) {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('aba-' + aba).classList.add('active');
+            document.querySelectorAll('.tab-btn')[aba === 'impostos' ? 0 : 1].classList.add('active');
+        }
 
-    async function exibirTodos() {
+        // ── Cadastro de imposto ───────────────────────────────────────
+        document.getElementById('formCadastro').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const nome = document.getElementById('nomeImposto').value.trim();
+            const codigo = parseInt(document.getElementById('codigoSgs').value);
+            const btn = document.getElementById('btnCadastrar');
+            const msg = document.getElementById('msgCadastro');
 
-        const resposta = await fetch("http://localhost:8080/api/bcb/find-all")
-        const res = await resposta.json()
-        console.log(res)
+            msg.className = 'message';
+            msg.textContent = '';
+            btn.disabled = true;
+            btn.textContent = 'Cadastrando...';
 
-        res.forEach(imposto => {
-
-            impostos.innerHTML += formatarImposto(imposto) + "<br>";
-
+            try {
+                const response = await inserirImposto(nome, codigo);
+                if (response.ok) {
+                    msg.classList.add('success');
+                    msg.textContent = 'Imposto cadastrado com sucesso!';
+                    document.getElementById('formCadastro').reset();
+                    carregarImpostos();
+                } else {
+                    const err = await response.json().catch(() => null);
+                    msg.classList.add('error');
+                    msg.textContent = err?.mensagem || 'Erro ao cadastrar imposto.';
+                }
+            } catch {
+                msg.classList.add('error');
+                msg.textContent = 'Erro ao conectar com o servidor.';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Cadastrar Imposto';
+            }
         });
 
-    }
-
-    async function inserirImposto(nome, codigo) {
-
-        await fetch("http://localhost:8080/api/bcb/inserir-imposto", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                nomeImposto: nome,
-                codigoSgs: codigo
-            })
-        })
-
-    }
-
-    async function atualizarImposto() {
-        await fetch("http://localhost:8080/api/bcb/atualizar-impostos", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
+        // ── Carregar lista de impostos ────────────────────────────────
+        async function carregarImpostos() {
+            const lista = document.getElementById('listaImpostos');
+            lista.innerHTML = '<p class="empty">Carregando...</p>';
+            try {
+                const res = await fetch('http://localhost:8080/api/bcb/find-all-impostos');
+                const dados = await res.json();
+                if (!dados.length) {
+                    lista.innerHTML = '<p class="empty">Nenhum imposto cadastrado.</p>';
+                    return;
+                }
+                // Agrupa por nome de imposto (cada imposto único)
+                const unicos = [...new Map(dados.map(d => [d.nomeImposto, d])).values()];
+                lista.innerHTML = unicos.map(imp => `
+                    <div class="imposto-card">
+                        <div class="info">
+                            <strong>${imp.nomeImposto}</strong>
+                            <span>Código SGS: ${imp.codigoSgs ?? '—'}</span>
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn btn-secondary" onclick="buscarImpostoPorNome('${imp.nomeImposto}')">Ver detalhes</button>
+                            <button class="btn btn-warning" onclick="abrirEdicao(${imp.id}, '${imp.nomeImposto.replace(/'/g, "\\'")}', ${imp.codigoSgs ?? 0})">Editar</button>
+                            <button class="btn btn-danger" onclick="confirmarDeletar(${imp.id})">Deletar</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch {
+                lista.innerHTML = '<p class="empty" style="color:#c62828">Erro ao carregar impostos.</p>';
             }
-        })
-    }
+        }
 
-    async function deletarImposto(id) {
-        await fetch(`http://localhost:8080/api/bcb/deletar-imposto/${id}`, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json"
+        // ── Buscar imposto individual ─────────────────────────────────
+        async function buscarImpostoPorNome(nome) {
+            const box = document.getElementById('detalheImposto');
+            box.classList.remove('visible');
+            try {
+                const res = await fetch(`http://localhost:8080/api/bcb/find/${encodeURIComponent(nome)}`);
+                const imp = await res.json();
+                document.getElementById('detalheNome').textContent = imp.nomeImposto;
+                document.getElementById('detalheCodigo').textContent = `Código SGS: ${imp.codigoSgs ?? '—'}`;
+                document.getElementById('detalheValor').textContent = imp.valor != null
+                    ? `Valor atual: ${(imp.valor * 100).toFixed(2)}%`
+                    : 'Valor atual: —';
+                document.getElementById('detalheData').textContent = imp.dataRegistro
+                    ? `Último registro: ${formatarData(imp.dataRegistro)}`
+                    : '';
+                box.classList.add('visible');
+            } catch {
+                box.innerHTML = '<p style="color:#c62828">Erro ao buscar detalhes do imposto.</p>';
+                box.classList.add('visible');
             }
-        })
-    }
+        }
 
-    function formatarData(data) {
-        const dataObj = new Date(data);
-        const dia = String(dataObj.getDate()).padStart(2, '0');
-        const mes = String(dataObj.getMonth() + 1).padStart(2, '0');
-        const ano = dataObj.getFullYear();
-        return `${dia}/${mes}/${ano}`;
-    }
+        // ── Carregar todos os registros ───────────────────────────────
+        async function carregarRegistros() {
+            const lista = document.getElementById('listaRegistros');
+            lista.innerHTML = '<p class="empty">Carregando...</p>';
 
-    function formatarImposto(imposto) {
-        return `Data Registro: ${formatarData(imposto.dataRegistro)} - Nome: ${imposto.nomeImposto} - Valor: ${formatarValorImposto(imposto)}`;
-    }
+            try {
+                await atualizarImposto(); // Atualiza os valores antes de carregar
+                const res = await fetch('http://localhost:8080/api/bcb/find-all');
+                const dados = await res.json();
+                if (!dados.length) {
+                    lista.innerHTML = '<p class="empty">Nenhum registro encontrado.</p>';
+                    return;
+                }
+                lista.innerHTML = dados.map(imp => `
+                    <div class="registro-item">
+                        ${formatarImposto(imp)}
+                    </div>
+                `).join('');
+            } catch {
+                lista.innerHTML = '<p class="empty" style="color:#c62828">Erro ao carregar registros.</p>';
+            }
+        }
 
-    function formatarValorImposto(imposto) {
-        return (imposto.valor * 100).toFixed(2) + '%';
-    }
+        // ── Editar imposto (nome e código SGS) ──────────────────────
+        let _editandoId = null;
 
-</script>
+        function abrirEdicao(id, nome, codigo) {
+            _editandoId = id;
+            document.getElementById('editNome').value = nome;
+            document.getElementById('editCodigo').value = codigo;
+            document.getElementById('modalEdicao').classList.add('visible');
+        }
+
+        function fecharModal() {
+            _editandoId = null;
+            document.getElementById('modalEdicao').classList.remove('visible');
+        }
+
+        async function salvarEdicao() {
+            const nome = document.getElementById('editNome').value.trim();
+            const codigo = parseInt(document.getElementById('editCodigo').value);
+            if (!nome || isNaN(codigo)) {
+                alert('Preencha todos os campos.');
+                return;
+            }
+            try {
+                const response = await fetch(`http://localhost:8080/api/bcb/atualizar-imposto/${_editandoId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nomeImposto: nome, codigoSgs: codigo })
+                });
+                if (response.ok) {
+                    fecharModal();
+                    carregarImpostos();
+                } else {
+                    alert('Erro ao atualizar o imposto.');
+                }
+            } catch {
+                alert('Erro ao conectar com o servidor.');
+            }
+        }
+
+        // ── Deletar imposto com confirmação ──────────────────────────
+        async function confirmarDeletar(id) {
+            if (!confirm('Deseja realmente deletar este imposto?')) return;
+            try {
+                const response = await deletarImposto(id);
+                if (response.ok) {
+                    document.getElementById('detalheImposto').classList.remove('visible');
+                    carregarImpostos();
+                } else {
+                    alert('Erro ao deletar o imposto.');
+                }
+            } catch {
+                alert('Erro ao conectar com o servidor.');
+            }
+        }
+
+        // ── Funções existentes ────────────────────────────────────────
+        async function inserirImposto(nome, codigo) {
+            return fetch('http://localhost:8080/api/bcb/inserir-imposto', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nomeImposto: nome, codigoSgs: codigo })
+            });
+        }
+
+        async function atualizarImposto() {
+            return fetch('http://localhost:8080/api/bcb/atualizar-impostos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+        }
+
+        async function deletarImposto(id) {
+            return fetch(`http://localhost:8080/api/bcb/deletar-imposto/${id}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' }
+            });
+        }
+
+        function formatarData(data) {
+            const d = new Date(data);
+            const dia = String(d.getDate()).padStart(2, '0');
+            const mes = String(d.getMonth() + 1).padStart(2, '0');
+            const ano = d.getFullYear();
+            return `${dia}/${mes}/${ano}`;
+        }
+
+        function formatarImposto(imp) {
+            return `Data Registro: ${formatarData(imp.dataRegistro)} — Nome: ${imp.nomeImposto} — Valor: ${formatarValorImposto(imp)}`;
+        }
+
+        function formatarValorImposto(imp) {
+            return (imp.valor * 100).toFixed(2) + '%';
+        }
+
+    </script>
+    <div id="modalEdicao" class="modal-overlay">
+        <div class="modal-box">
+            <h3>Editar Imposto</h3>
+            <div class="form-group">
+                <label for="editNome">Nome do Imposto</label>
+                <input type="text" id="editNome" placeholder="Ex: CDI, Selic, IPCA" />
+            </div>
+            <div class="form-group">
+                <label for="editCodigo">Código SGS</label>
+                <input type="number" id="editCodigo" placeholder="Ex: 12" />
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-primary" style="flex:1;" onclick="salvarEdicao()">Salvar</button>
+                <button class="btn btn-secondary" style="flex:1;" onclick="fecharModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
