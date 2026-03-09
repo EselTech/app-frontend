@@ -325,7 +325,6 @@
             <div class="detalhe-box" id="detalheImposto">
                 <h3 id="detalheNome"></h3>
                 <p id="detalheCodigo"></p>
-                <p id="detalheValor"></p>
                 <p id="detalheData"></p>
             </div>
         </div>
@@ -422,19 +421,29 @@
             const box = document.getElementById('detalheImposto');
             box.classList.remove('visible');
             try {
-                const res = await fetch(`http://localhost:8080/api/bcb/find/${encodeURIComponent(nome)}`);
-                const imp = await res.json();
+                const res = await fetch(`http://localhost:8080/api/bcb/buscar-por-nome?nome=${encodeURIComponent(nome)}`);
+                const data = await res.json();
+                // A API pode retornar array ou objeto único
+                const imp = Array.isArray(data) ? data[0] : data;
+                if (!imp) {
+                    document.getElementById('detalheNome').textContent = 'Nenhum dado encontrado.';
+                    document.getElementById('detalheCodigo').textContent = '';
+                    document.getElementById('detalheData').textContent = '';
+                    box.classList.add('visible');
+                    box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    return;
+                }
                 document.getElementById('detalheNome').textContent = imp.nomeImposto;
                 document.getElementById('detalheCodigo').textContent = `Código SGS: ${imp.codigoSgs ?? '—'}`;
-                document.getElementById('detalheValor').textContent = imp.valor != null
-                    ? `Valor atual: ${(imp.valor * 100).toFixed(2)}%`
-                    : 'Valor atual: —';
                 document.getElementById('detalheData').textContent = imp.dataRegistro
                     ? `Último registro: ${formatarData(imp.dataRegistro)}`
                     : '';
                 box.classList.add('visible');
+                box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             } catch {
-                box.innerHTML = '<p style="color:#c62828">Erro ao buscar detalhes do imposto.</p>';
+                document.getElementById('detalheNome').textContent = 'Erro ao buscar detalhes.';
+                document.getElementById('detalheCodigo').textContent = '';
+                document.getElementById('detalheData').textContent = '';
                 box.classList.add('visible');
             }
         }
@@ -540,23 +549,8 @@
             });
         }
 
-        function formatarData(data) {
-            const d = new Date(data);
-            const dia = String(d.getDate()).padStart(2, '0');
-            const mes = String(d.getMonth() + 1).padStart(2, '0');
-            const ano = d.getFullYear();
-            return `${dia}/${mes}/${ano}`;
-        }
-
-        function formatarImposto(imp) {
-            return `Data Registro: ${formatarData(imp.dataRegistro)} — Nome: ${imp.nomeImposto} — Valor: ${formatarValorImposto(imp)}`;
-        }
-
-        function formatarValorImposto(imp) {
-            return (imp.valor * 100).toFixed(2) + '%';
-        }
-
     </script>
+    <script src="utils/formatters.js"></script>
     <div id="modalEdicao" class="modal-overlay">
         <div class="modal-box">
             <h3>Editar Imposto</h3>
